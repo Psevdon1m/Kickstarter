@@ -1,5 +1,18 @@
 pragma solidity ^0.4.17;
 
+contract CampaingFactory {
+    address[] public deplpoyedCampaigns;
+
+    function createCampaign(uint minimum) public {
+        address newCampaign = new Kickstarter(minimum, msg.sender);
+        deplpoyedCampaigns.push(newCampaign);
+    }
+
+    function getDeployedCampaigns() public view returns (address[]) {
+        return deplpoyedCampaigns;
+    }
+}
+
 contract Kickstarter {
     address public manager;
     
@@ -26,8 +39,8 @@ contract Kickstarter {
     }
     
     
-    constructor(uint minimum) public {
-        manager = msg.sender;
+    constructor(uint minimum, address creator) public {
+        manager = creator;
         
         minimumContribution = minimum;
     }
@@ -69,7 +82,7 @@ contract Kickstarter {
     
     //This function helps the  manager close the request based on either approved or rejected outcome
     
-    function finilizeRequest(uint256 index) public restricted {
+    function finalizeRequest(uint256 index) public restricted {
         Request storage request = requests[index];
         
         require(!request.complete, "This request has already been complete!");
